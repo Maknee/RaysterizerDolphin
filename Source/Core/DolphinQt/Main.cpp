@@ -159,7 +159,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
   // (Segoe UI on English computers).
   // So use it for the entire application.
   // This code will become unnecessary and obsolete once we switch to Qt 6.
-  QApplication::setFont(QApplication::font("QMenu"));
+  //QApplication::setFont(QApplication::font("QMenu"));
 #endif
 
 #ifdef _WIN32

@@ -101,7 +101,8 @@ void VideoConfig::Refresh()
   bInternalResolutionFrameDumps = Config::Get(Config::GFX_INTERNAL_RESOLUTION_FRAME_DUMPS);
   bEnableGPUTextureDecoding = Config::Get(Config::GFX_ENABLE_GPU_TEXTURE_DECODING);
   bEnablePixelLighting = Config::Get(Config::GFX_ENABLE_PIXEL_LIGHTING);
-  bFastDepthCalc = Config::Get(Config::GFX_FAST_DEPTH_CALC);
+  //bFastDepthCalc = Config::Get(Config::GFX_FAST_DEPTH_CALC);
+  bFastDepthCalc = true;
   iMultisamples = Config::Get(Config::GFX_MSAA);
   bSSAA = Config::Get(Config::GFX_SSAA);
   iEFBScale = Config::Get(Config::GFX_EFB_SCALE);
@@ -113,7 +114,8 @@ void VideoConfig::Refresh()
   bEnableValidationLayer = Config::Get(Config::GFX_ENABLE_VALIDATION_LAYER);
   bBackendMultithreading = Config::Get(Config::GFX_BACKEND_MULTITHREADING);
   iCommandBufferExecuteInterval = Config::Get(Config::GFX_COMMAND_BUFFER_EXECUTE_INTERVAL);
-  bShaderCache = Config::Get(Config::GFX_SHADER_CACHE);
+  //bShaderCache = Config::Get(Config::GFX_SHADER_CACHE);
+  bShaderCache = false; 
   bWaitForShadersBeforeStarting = Config::Get(Config::GFX_WAIT_FOR_SHADERS_BEFORE_STARTING);
   iShaderCompilationMode = Config::Get(Config::GFX_SHADER_COMPILATION_MODE);
   iShaderCompilerThreads = Config::Get(Config::GFX_SHADER_COMPILER_THREADS);

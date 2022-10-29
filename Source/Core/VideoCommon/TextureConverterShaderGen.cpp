@@ -74,6 +74,7 @@ ShaderCode GenerateVertexShader(APIType api_type)
     {
       out.Write("VARYING_LOCATION(0) out float3 v_tex0;\n");
     }
+    out.Write("  in vec3 DUMMY_POSITION;\n");
     out.Write("#define id gl_VertexID\n"
               "#define opos gl_Position\n"
               "void main() {{\n");
@@ -113,11 +114,19 @@ ShaderCode GeneratePixelShader(APIType api_type, const UidData* uid_data)
   else if (api_type == APIType::OpenGL || api_type == APIType::Vulkan)
   {
     out.Write("SAMPLER_BINDING(0) uniform sampler2DArray samp0;\n");
+    /*
     out.Write("float4 SampleEFB(float3 uv, float y_offset) {{\n"
               "  return texture(samp0, float3(uv.x, clamp(uv.y + (y_offset * pixel_height), "
               "clamp_tb.x, clamp_tb.y), {}));\n"
               "}}\n",
               mono_depth ? "0.0" : "uv.z");
+              */
+
+    out.Write("#define SampleEFB(uv, y_offset) "
+              "texture(samp0, vec3(uv.x, clamp(uv.y + (y_offset * pixel_height), "
+              "clamp_tb.x, clamp_tb.y), {}))\n",
+              mono_depth ? "0.0" : "uv.z");
+    
     if (g_ActiveConfig.backend_info.bSupportsGeometryShaders)
     {
       out.Write("VARYING_LOCATION(0) in VertexData {{\n"

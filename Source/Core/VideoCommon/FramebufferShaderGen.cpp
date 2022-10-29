@@ -5,6 +5,7 @@
 #include "VideoCommon/FramebufferShaderGen.h"
 
 #include <string_view>
+#include <fstream>
 
 #include "Common/Logging/Log.h"
 
@@ -225,9 +226,11 @@ void EmitPixelMainDeclaration(ShaderCode& code, u32 num_tex_inputs, u32 num_colo
 std::string GenerateScreenQuadVertexShader()
 {
   ShaderCode code;
+  code.Write("  in vec3 DUMMY_POSITION;\n");
   EmitVertexMainDeclaration(code, 0, 0, false, 1, 0,
                             GetAPIType() == APIType::D3D ? "in uint id : SV_VertexID, " :
                                                            "#define id gl_VertexID\n");
+
   code.Write(
       "{{\n"
       "  v_tex0 = float3(float((id << 1) & 2), float(id & 2), 0.0f);\n"
@@ -334,6 +337,7 @@ std::string GeneratePassthroughGeometryShader(u32 num_tex, u32 num_colors)
   return code.GetBuffer();
 }
 
+
 std::string GenerateTextureCopyVertexShader()
 {
   ShaderCode code;
@@ -342,6 +346,8 @@ std::string GenerateTextureCopyVertexShader()
              "  float2 src_offset;\n"
              "  float2 src_size;\n"
              "}};\n\n");
+
+  code.Write("  in vec3 DUMMY_POSITION;\n");
 
   EmitVertexMainDeclaration(code, 0, 0, false, 1, 0,
                             GetAPIType() == APIType::D3D ? "in uint id : SV_VertexID, " :
@@ -357,6 +363,9 @@ std::string GenerateTextureCopyVertexShader()
 
   code.Write("}}\n");
 
+  std::ofstream ooo("lol.txt", std::ios::trunc);
+  ooo << code.GetBuffer();
+
   return code.GetBuffer();
 }
 
@@ -370,6 +379,9 @@ std::string GenerateTextureCopyPixelShader()
   EmitSampleTexture(code, 0, "v_tex0");
   code.Write(";\n"
              "}}\n");
+
+    std::ofstream ooo("lol2.txt", std::ios::trunc);
+  ooo << code.GetBuffer();
   return code.GetBuffer();
 }
 
@@ -414,6 +426,8 @@ std::string GenerateResolveDepthPixelShader(u32 samples)
 std::string GenerateClearVertexShader()
 {
   ShaderCode code;
+  code.Write("  in vec3 DUMMY_POSITION;\n");
+
   EmitUniformBufferDeclaration(code);
   code.Write("{{\n"
              "  float4 clear_color;\n"

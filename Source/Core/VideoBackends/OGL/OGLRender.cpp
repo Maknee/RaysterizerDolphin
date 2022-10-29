@@ -420,21 +420,35 @@ Renderer::Renderer(std::unique_ptr<GLContext> main_gl_context, float backbuffer_
   g_Config.backend_info.bSupportsDualSourceBlend =
       (GLExtensions::Supports("GL_ARB_blend_func_extended") ||
        GLExtensions::Supports("GL_EXT_blend_func_extended"));
+  /*
   g_Config.backend_info.bSupportsPrimitiveRestart =
       !DriverDetails::HasBug(DriverDetails::BUG_PRIMITIVE_RESTART) &&
       ((GLExtensions::Version() >= 310) || GLExtensions::Supports("GL_NV_primitive_restart"));
+  */
+  g_Config.backend_info.bSupportsPrimitiveRestart = false;
+  //influences bbox
+  /*
   g_Config.backend_info.bSupportsFragmentStoresAndAtomics =
       GLExtensions::Supports("GL_ARB_shader_storage_buffer_object");
+  */
+  g_Config.backend_info.bSupportsFragmentStoresAndAtomics = false; 
   g_Config.backend_info.bSupportsGSInstancing = GLExtensions::Supports("GL_ARB_gpu_shader5");
   g_Config.backend_info.bSupportsSSAA = GLExtensions::Supports("GL_ARB_gpu_shader5") &&
                                         GLExtensions::Supports("GL_ARB_sample_shading");
+  /*
   g_Config.backend_info.bSupportsGeometryShaders =
       GLExtensions::Version() >= 320 &&
       !DriverDetails::HasBug(DriverDetails::BUG_BROKEN_GEOMETRY_SHADERS);
+  */
+  g_Config.backend_info.bSupportsGeometryShaders = false;
+
+  /*
   g_Config.backend_info.bSupportsPaletteConversion =
       GLExtensions::Supports("GL_ARB_texture_buffer_object") ||
       GLExtensions::Supports("GL_OES_texture_buffer") ||
       GLExtensions::Supports("GL_EXT_texture_buffer");
+  */
+  g_Config.backend_info.bSupportsPaletteConversion = false; 
   g_Config.backend_info.bSupportsClipControl = GLExtensions::Supports("GL_ARB_clip_control");
   g_ogl_config.bSupportsCopySubImage =
       (GLExtensions::Supports("GL_ARB_copy_image") || GLExtensions::Supports("GL_NV_copy_image") ||
@@ -445,11 +459,16 @@ Renderer::Renderer(std::unique_ptr<GLContext> main_gl_context, float backbuffer_
 
   // Desktop OpenGL supports the binding layout if it supports 420pack
   // OpenGL ES 3.1 supports it implicitly without an extension
+  /*
   g_Config.backend_info.bSupportsBindingLayout =
       GLExtensions::Supports("GL_ARB_shading_language_420pack");
+  */
+  g_Config.backend_info.bSupportsBindingLayout = false;
 
   // Clip distance support is useless without a method to clamp the depth range
-  g_Config.backend_info.bSupportsDepthClamp = GLExtensions::Supports("GL_ARB_depth_clamp");
+  //g_Config.backend_info.bSupportsDepthClamp = GLExtensions::Supports("GL_ARB_depth_clamp");
+  g_Config.backend_info.bSupportsDepthClamp =
+      false;  // GLExtensions::Supports("GL_ARB_depth_clamp");
 
   // Desktop OpenGL supports bitfield manulipation and dynamic sampler indexing if it supports
   // shader5. OpenGL ES 3.1 supports it implicitly without an extension
@@ -461,12 +480,22 @@ Renderer::Renderer(std::unique_ptr<GLContext> main_gl_context, float backbuffer_
   supports_glsl_cache = GLExtensions::Supports("GL_ARB_get_program_binary");
   g_ogl_config.bSupportsGLPinnedMemory = GLExtensions::Supports("GL_AMD_pinned_memory");
   g_ogl_config.bSupportsGLSync = GLExtensions::Supports("GL_ARB_sync");
+  /*
   g_ogl_config.bSupportsGLBaseVertex = GLExtensions::Supports("GL_ARB_draw_elements_base_vertex") ||
                                        GLExtensions::Supports("GL_EXT_draw_elements_base_vertex") ||
                                        GLExtensions::Supports("GL_OES_draw_elements_base_vertex");
+  */
+  g_ogl_config.bSupportsGLBaseVertex = false;
+  /*
   g_ogl_config.bSupportsGLBufferStorage = GLExtensions::Supports("GL_ARB_buffer_storage") ||
                                           GLExtensions::Supports("GL_EXT_buffer_storage");
+                                          */
+  g_ogl_config.bSupportsGLBufferStorage = false;
+                                          /*
   g_ogl_config.bSupportsMSAA = GLExtensions::Supports("GL_ARB_texture_multisample");
+  */
+  g_ogl_config.bSupportsMSAA = false;
+
   g_ogl_config.bSupportViewportFloat = GLExtensions::Supports("GL_ARB_viewport_array");
   g_ogl_config.bSupportsDebug =
       GLExtensions::Supports("GL_KHR_debug") || GLExtensions::Supports("GL_ARB_debug_output");
@@ -502,6 +531,9 @@ Renderer::Renderer(std::unique_ptr<GLContext> main_gl_context, float backbuffer_
     supports_glsl_cache = true;
     g_ogl_config.bSupportsGLSync = true;
 
+    /*EDIT*/
+    //g_Config.backend_info.bSupportsReversedDepthRange = false;
+
     // TODO: Implement support for GL_EXT_clip_cull_distance when there is an extension for
     // depth clamping.
     g_Config.backend_info.bSupportsDepthClamp = false;
@@ -525,6 +557,7 @@ Renderer::Renderer(std::unique_ptr<GLContext> main_gl_context, float backbuffer_
     {
       g_ogl_config.SupportedFramebufferFetch = EsFbFetchType::FbFetchNone;
     }
+    g_ogl_config.SupportedFramebufferFetch = EsFbFetchType::FbFetchNone;
     g_Config.backend_info.bSupportsFramebufferFetch =
         g_ogl_config.SupportedFramebufferFetch != EsFbFetchType::FbFetchNone;
 
