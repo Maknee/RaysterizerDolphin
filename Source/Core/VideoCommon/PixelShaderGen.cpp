@@ -900,7 +900,9 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
     if (!host_config.backend_reversed_depth_range)
       out.Write("\tdepth = 1.0 - float(zCoord) / 16777216.0;\n");
     else
-      out.Write("\tdepth = float(zCoord) / 16777216.0;\n");
+    {
+      //out.Write("\tdepth = float(zCoord) / 16777216.0;\n");
+    }
   }
 
   // Note: depth texture output is only written to depth buffer if late depth test is used
@@ -921,7 +923,9 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
     if (!host_config.backend_reversed_depth_range)
       out.Write("\tdepth = 1.0 - float(zCoord) / 16777216.0;\n");
     else
-      out.Write("\tdepth = float(zCoord) / 16777216.0;\n");
+    {
+      //out.Write("\tdepth = float(zCoord) / 16777216.0;\n");
+    }
   }
 
   // No dithering for RGB8 mode

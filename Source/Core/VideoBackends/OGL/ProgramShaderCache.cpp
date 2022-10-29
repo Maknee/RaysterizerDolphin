@@ -34,6 +34,7 @@
 #include "VideoCommon/VertexShaderManager.h"
 #include "VideoCommon/VideoBackendBase.h"
 #include "VideoCommon/VideoConfig.h"
+#include <iostream>
 
 namespace OGL
 {
@@ -226,6 +227,31 @@ void ProgramShaderCache::UploadConstants()
 
     memcpy(buffer.first + Common::AlignUp(sizeof(PixelShaderConstants), s_ubo_align),
            &VertexShaderManager::constants, sizeof(VertexShaderConstants));
+
+    if (0)
+    {
+		HANDLE ConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    int SystemOutput = _open_osfhandle(intptr_t(ConsoleOutput), 0x4000);
+    FILE* COutputHandle = _fdopen(SystemOutput, "w");
+
+		freopen_s(&COutputHandle, "CONOUT$", "w", stdout);
+    std::ios_base::sync_with_stdio();
+    std::cout.clear();
+
+    for (auto i = 0; i < VertexShaderManager::constants.projection.size(); i++)
+    {
+      auto& v = VertexShaderManager::constants.projection[i];
+      std::cout << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << "\n";
+    }
+    std::cout << "\n";
+
+    for (auto i = 0; i < VertexShaderManager::constants.posnormalmatrix.size() && i != 4; i++)
+    {
+      auto& v = VertexShaderManager::constants.posnormalmatrix[i];
+      std::cout << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << "\n";
+    }
+    std::cout << "\n";
+    }
 
     memcpy(buffer.first + Common::AlignUp(sizeof(PixelShaderConstants), s_ubo_align) +
                Common::AlignUp(sizeof(VertexShaderConstants), s_ubo_align),

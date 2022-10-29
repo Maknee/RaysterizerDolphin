@@ -367,9 +367,26 @@ void VertexShaderManager::SetConstants()
       g_fProjectionMatrix[6] = rawProjection[3] * g_ActiveConfig.fAspectRatioHackH * fov.y;
       g_fProjectionMatrix[7] = 0.0f;
 
+      // Calculate -far / (far - near), but incorrect_val = -near / (far - near)
+      auto incorrect_val = rawProjection[4];
+
+      // calculate near
+      auto v_far = xfmem.viewport.farZ;
+
+      // incorrect_val * (far - near) = -near
+      // incorrect_val * far = -near + incorrect_val * near
+      // (incorrect_val * far) / (-1 + incorrect_val) = near
+      auto v_near = (incorrect_val * v_far) / (-1.0f + incorrect_val);
+
+      // Fix it, -far / (far - near)
+      //auto fixed_val = (v_far + v_near) / (v_near - v_far);
+      auto fixed_val = (v_far + v_near) / (v_near - v_far);
+
       g_fProjectionMatrix[8] = 0.0f;
       g_fProjectionMatrix[9] = 0.0f;
+      g_fProjectionMatrix[10] = fixed_val;
       g_fProjectionMatrix[10] = rawProjection[4];
+      //g_fProjectionMatrix[11] = 2 * rawProjection[5];
       g_fProjectionMatrix[11] = rawProjection[5];
 
       g_fProjectionMatrix[12] = 0.0f;
@@ -394,9 +411,34 @@ void VertexShaderManager::SetConstants()
       g_fProjectionMatrix[6] = 0.0f;
       g_fProjectionMatrix[7] = rawProjection[3];
 
+      //-1.0/(f-n)	
+      auto wrong_ortho4 = rawProjection[4];
+
+      //-(f)/(f-n)	
+      //auto wrong_ortho5 = rawProjection[5];
+
+      // -1.0/(f-n) -> -2.0/(f-n)
+      auto right_ortho4 = 2 * wrong_ortho4;
+
+      // calculate near and far
+      auto v_far = xfmem.viewport.farZ;
+
+      // (f - n) * wrong_ortho4 = -1.0
+      // -n * wrong_ortho4 = -1.0 - f * wrong_ortho4
+      // n = (1.0 + f * wrong_ortho4) / wrong_ortho4
+      auto v_near = (1.0f + v_far * wrong_ortho4) / wrong_ortho4;
+
+      //-(f)/(f-n) -> -(f + n)/(f-n)
+      auto right_ortho5 = - (v_far + v_near) / (v_far - v_near);
+
+
       g_fProjectionMatrix[8] = 0.0f;
       g_fProjectionMatrix[9] = 0.0f;
+      g_fProjectionMatrix[10] = right_ortho4;
+      g_fProjectionMatrix[11] = right_ortho5;
+      //g_fProjectionMatrix[10] = rawProjection[4];
       g_fProjectionMatrix[10] = rawProjection[4];
+      //g_fProjectionMatrix[11] = rawProjection[5];
       g_fProjectionMatrix[11] = rawProjection[5];
 
       g_fProjectionMatrix[12] = 0.0f;
@@ -404,6 +446,8 @@ void VertexShaderManager::SetConstants()
 
       g_fProjectionMatrix[14] = 0.0f;
       g_fProjectionMatrix[15] = 1.0f;
+
+      //memset(g_fProjectionMatrix.data(), 0, sizeof(g_fProjectionMatrix[0]) * g_fProjectionMatrix.size());
 
       g_stats.g2proj = g_fProjectionMatrix;
       g_stats.proj = rawProjection;
@@ -421,6 +465,12 @@ void VertexShaderManager::SetConstants()
 
     if (g_freelook_camera.IsActive() && xfmem.projection.type == ProjectionType::Perspective)
       corrected_matrix *= g_freelook_camera.GetView();
+
+    //corrected_matrix.data[0] *= xfmem.viewport.zRange / 16777215.0f;
+    //corrected_matrix.data[5] *= 1.0f - xfmem.viewport.farZ / 16777215.0f;
+    corrected_matrix.data[10] = -corrected_matrix.data[10];  // * (1.0 - 1e-7);
+    corrected_matrix.data[11] = -corrected_matrix.data[11];  // * (1.0 - 1e-7);
+    corrected_matrix.data[14] = corrected_matrix.data[14];
 
     memcpy(constants.projection.data(), corrected_matrix.data.data(), 4 * sizeof(float4));
 

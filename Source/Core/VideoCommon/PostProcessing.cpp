@@ -33,7 +33,8 @@
 
 namespace VideoCommon
 {
-static const char s_default_shader[] = "void main() { SetOutput(Sample()); }\n";
+//static const char s_default_shader[] = "void main() { SetOutput(Sample()); }\n";
+static const char s_default_shader[] = "void main() { ocol0 = texture(samp0, v_tex0); }\n";
 
 PostProcessingConfiguration::PostProcessingConfiguration() = default;
 
@@ -533,6 +534,53 @@ static float4 ocol0;
 )";
   }
 
+    ss << R"(
+#define Sample() texture(samp0, v_tex0)
+#define SampleLocation(location) texture(samp0, float3(location, float(v_tex0.z)))
+#define SampleLayer(layer) texture(samp0, float3(v_tex0.xy, float(layer)))
+#define SampleOffset(offset) textureOffset(samp0, v_tex0, offset)
+
+float2 GetWindowResolution()
+{
+  return window_resolution.xy;
+}
+
+float2 GetResolution()
+{
+  return resolution.xy;
+}
+
+float2 GetInvResolution()
+{
+  return resolution.zw;
+}
+
+float2 GetCoordinates()
+{
+  return v_tex0.xy;
+}
+
+float GetLayer()
+{
+  return v_tex0.z;
+}
+
+uint GetTime()
+{
+  return time;
+}
+
+void SetOutput(float4 color)
+{
+  ocol0 = color;
+}
+
+#define GetOption(x) (x)
+#define OptionEnabled(x) ((x) != 0)
+
+)";
+
+  /*
   ss << R"(
 float4 Sample() { return texture(samp0, v_tex0); }
 float4 SampleLocation(float2 location) { return texture(samp0, float3(location, float(v_tex0.z))); }
@@ -578,6 +626,7 @@ void SetOutput(float4 color)
 #define OptionEnabled(x) ((x) != 0)
 
 )";
+  */
   return ss.str();
 }
 
@@ -624,6 +673,7 @@ bool PostProcessing::CompileVertexShader()
       ss << "VARYING_LOCATION(0) out float3 v_tex0;\n";
     }
 
+    ss << "  in vec3 DUMMY_POSITION;\n";
     ss << "#define id gl_VertexID\n";
     ss << "#define opos gl_Position\n";
     ss << "void main() {\n";

@@ -971,7 +971,9 @@ bool Renderer::InitializeImGui()
     int font_tex_width, font_tex_height;
     io.Fonts->GetTexDataAsRGBA32(&font_tex_pixels, &font_tex_width, &font_tex_height);
 
-    TextureConfig font_tex_config(font_tex_width, font_tex_height, 1, 1, 1,
+    //TextureConfig font_tex_config(font_tex_width, font_tex_height, 1, 1, 1,
+    //                              AbstractTextureFormat::RGBA8, 0);
+    TextureConfig font_tex_config(font_tex_width, font_tex_height, 1, 1, 0,
                                   AbstractTextureFormat::RGBA8, 0);
     std::unique_ptr<AbstractTexture> font_tex = CreateTexture(font_tex_config);
     if (!font_tex)
@@ -1122,7 +1124,7 @@ void Renderer::DrawImGui()
               static_cast<int>(cmd.ClipRect.z), static_cast<int>(cmd.ClipRect.w)),
           m_current_framebuffer));
       SetTexture(0, reinterpret_cast<const AbstractTexture*>(cmd.TextureId));
-      DrawIndexed(base_index, cmd.ElemCount, base_vertex);
+      //DrawIndexed(base_index, cmd.ElemCount, base_vertex);
       base_index += cmd.ElemCount;
     }
   }
