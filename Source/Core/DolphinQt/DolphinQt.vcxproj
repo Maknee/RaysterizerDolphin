@@ -42,6 +42,10 @@
     <Manifest>
       <AdditionalManifestFiles>DolphinQt.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AboutDialog.cpp" />

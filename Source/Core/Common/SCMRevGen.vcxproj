@@ -56,7 +56,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <PreBuildEvent>
-      <Command>"$(CScript)" /nologo /E:JScript "make_scmrev.h.js"</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
